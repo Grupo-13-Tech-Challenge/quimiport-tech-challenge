@@ -156,19 +156,20 @@ Para a entrega da fase, devem estar presentes:
 
 Os demais diagramas são complementares.
 
-## Status da entrega
-
-A documentação técnica e os artefatos obrigatórios de modelagem estão consolidados no repositório.
-
-As pendências restantes dependem de informações ou ações do grupo, como preenchimento dos RMs e gravação/publicação do vídeo demonstrativo. Veja [`PENDENCIAS.md`](./PENDENCIAS.md).
-
 ## Integrantes
 
 | Integrante | RM |
 |---|---|
-| Milena | TODO |
-| Vini | TODO |
-| Bruno | TODO |
+| Bruno Pioltini Paiva | RM375998​
+| Ebert de Carvalho Rodrigues Neto | RM375253​
+| Leandro Cavalcanti de Souza Lima | RM376777​
+| Milena Porto Coyado | RM377078​
+| Vinicius Silva Santos | RM375576​
+
+
+## Vídeo Demonstrativo
+
+**Acesse aqui:** https://drive.google.com/file/d/1EOIrPqv-O8w-J40VcYWlb0fkAHQqgbYm/view?usp=drive_link
 
 ## Instituição
 

@@ -39,5 +39,3 @@ Por isso, `DOCUMENTACAO_APROVADA` não foi mantido como estado da máquina de es
 - `CANCELADA → qualquer outro estado`
 - `BLOQUEADA → LIBERADA`
 - desbloqueio/reabertura da carga
-
-Caso essas operações sejam necessárias em uma fase futura, deverão ser introduzidas por novos casos de uso e novas regras de negócio.

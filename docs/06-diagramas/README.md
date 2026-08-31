@@ -2,23 +2,6 @@
 
 Esta pasta reúne os diagramas gerais utilizados para representar o domínio, o ciclo de vida e a arquitetura proposta do QuimiPort.
 
-## Obrigatórios para a entrega
-
-- [x] **Diagrama de Domínio — Agregados / Entidades**
-- [x] **Fluxo de Transição de Status da Carga Química**
-
-## Complementares já produzidos
-
-- [x] Diagrama Consolidado de Casos de Uso
-- [x] Diagrama de Arquitetura em Camadas
-
-## Complementares opcionais
-
-- [ ] Diagrama de Contexto
-- [ ] Diagrama de Entidades e Relacionamentos Conceituais
-
-Esses dois diagramas são opcionais nesta fase e não são tratados como pendências obrigatórias.
-
 ## Organização
 
 ```text

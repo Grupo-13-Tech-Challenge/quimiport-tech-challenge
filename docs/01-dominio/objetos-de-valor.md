@@ -1,9 +1,5 @@
 # Objetos de Valor
 
-A lista de Objetos de Valor foi reduzida para manter somente conceitos que possuem uso claro na modelagem atual do QuimiPort.
-
-## Objetos de Valor adotados
-
 | Objeto de Valor | Responsabilidade | Regra / observação |
 |---|---|---|
 | `Quantidade` | Representar a quantidade de produto presente na carga, acompanhada de sua unidade de medida quando aplicável. | O valor deve ser maior que zero. |
