@@ -8,11 +8,7 @@
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "types": ["node"],
-
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-
+    "paths": { "@/*": ["./src/*"] },
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,

@@ -5,6 +5,7 @@
 **Responsabilidade:** representar uma carga registrada para movimentação e controlar seu ciclo de vida.
 
 **Principais atributos**
+
 - id (UUID)
 - produto químico
 - quantidade
@@ -15,6 +16,7 @@
 - status
 
 **Regras relacionadas**
+
 - deve possuir Produto Químico associado;
 - Produto Químico deve estar ativo;
 - deve possuir classificação de risco;
@@ -28,14 +30,19 @@
 **Responsabilidade:** representar o produto utilizado nas operações.
 
 **Principais atributos**
+
 - id (UUID)
 - nome comercial
+- descrição
 - fórmula química
 - Número ONU
 - classe de risco
-- status
+- status (inativo/ativo)
+- data de criação
+- data de atualização
 
 **Regras relacionadas**
+
 - nome é obrigatório;
 - classe de risco é obrigatória;
 - produtos inativos não podem ser utilizados em novas cargas.
@@ -45,6 +52,7 @@
 **Responsabilidade:** representar o profissional tecnicamente responsável pela carga.
 
 **Principais atributos**
+
 - id
 - nome
 - registro profissional
@@ -55,6 +63,7 @@
 **Responsabilidade:** representar documentos legais, laudos e licenças associados à carga.
 
 **Principais atributos**
+
 - id
 - tipo
 - número
@@ -67,6 +76,7 @@
 **Responsabilidade:** registrar a avaliação física ou documental realizada sobre a carga.
 
 **Principais atributos**
+
 - id
 - carga
 - data
@@ -79,6 +89,7 @@
 **Responsabilidade:** representar as áreas destinadas ao armazenamento das cargas químicas.
 
 **Principais atributos**
+
 - id
 - identificação/código
 - localização

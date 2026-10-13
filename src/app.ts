@@ -1,8 +1,7 @@
+import { chemicalProduct } from '@/interfaces/controllers/chemical-product/routes'
 import fastify from 'fastify'
-export const app = fastify()
-
-app.get('/health', async () => {
-  return {
-    status: 'ok',
-  }
+export const app = fastify({
+  logger: true,
 })
+
+app.register(chemicalProduct)

@@ -1,6 +1,6 @@
+import 'reflect-metadata'
 import { app } from '@/app'
 import { env } from '@/env'
-import '@/infrastructure/database/typeorm'
 
 app
   .listen({
