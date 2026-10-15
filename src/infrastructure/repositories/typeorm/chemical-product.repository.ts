@@ -24,7 +24,11 @@ export class ChemicalProductRepository implements IChemicalProductRepository {
     })
   }
 
-  create(chemicalProduct: IChemicalProduct): Promise<IChemicalProduct> {
+  async create(chemicalProduct: IChemicalProduct): Promise<IChemicalProduct> {
+    return this.repository.save(chemicalProduct)
+  }
+
+  async update(chemicalProduct: IChemicalProduct): Promise<IChemicalProduct> {
     return this.repository.save(chemicalProduct)
   }
 }
