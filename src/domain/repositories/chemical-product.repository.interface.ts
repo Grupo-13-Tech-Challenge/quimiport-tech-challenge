@@ -2,4 +2,5 @@ import type { IChemicalProduct } from '@/domain/models/chemical-product.interfac
 
 export interface IChemicalProductRepository {
   create(chemicalProduct: IChemicalProduct): Promise<IChemicalProduct>
+  findById(id: string): Promise<IChemicalProduct | null>
 }
