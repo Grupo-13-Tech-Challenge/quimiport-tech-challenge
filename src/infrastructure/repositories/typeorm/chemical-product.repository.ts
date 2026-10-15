@@ -14,4 +14,10 @@ export class ChemicalProductRepository implements IChemicalProductRepository {
   create(chemicalProduct: IChemicalProduct): Promise<IChemicalProduct> {
     return this.repository.save(chemicalProduct)
   }
+
+  async findById(id: string): Promise<IChemicalProduct | null> {
+    return this.repository.findOne({
+      where: { id },
+    })
+  }
 }
