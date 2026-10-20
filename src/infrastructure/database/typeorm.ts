@@ -1,4 +1,3 @@
-import { ChemicalCargo } from '@/domain/entities/chemical-cargo.entity'
 import { ChemicalProduct } from '@/domain/entities/chemical-product.entity'
 import { env } from '@/env'
 import { DataSource } from 'typeorm'
@@ -9,7 +8,7 @@ export const appDataSource = new DataSource({
   port: env.DATABASE_PORT,
   username: env.DATABASE_USER,
   password: env.DATABASE_PASSWORD,
-  entities: [ChemicalProduct, ChemicalCargo],
+  entities: [ChemicalProduct],
   database: env.DATABASE_NAME,
   logging: env.NODE_ENV === 'development',
 })

@@ -4,9 +4,7 @@
   "description": "Sistema para gestão de cargas químicas em contexto portuário.",
   "main": "index.js",
   "scripts": {
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "tsx watch src/server.ts",
     "start": "node build/server.js",
     "build": "tsup src --out-dir build --format esm",
@@ -29,7 +27,6 @@
     "@eslint/js": "^9.39.5",
     "@types/node": "^26.6.4",
     "@types/pg": "^8.23.1",
-    "@vitest/coverage-v8": "^5.0.5",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
@@ -38,7 +35,6 @@
     "tsup": "^8.5.1",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.71.0",
-    "vitest": "^5.0.5"
+    "typescript-eslint": "^8.71.0"
   }
 }
