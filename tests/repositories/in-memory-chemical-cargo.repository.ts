@@ -11,4 +11,16 @@ export class InMemoryChemicalCargoRepository implements IChemicalCargoRepository
   async findById(id: string): Promise<IChemicalCargo | null> {
     return this.items.find((item) => item.id === id) ?? null
   }
+
+  async update(chemicalCargo: IChemicalCargo): Promise<IChemicalCargo> {
+    const index = this.items.findIndex((item) => item.id === chemicalCargo.id)
+
+    if (index === -1) {
+      this.items.push(chemicalCargo)
+      return chemicalCargo
+    }
+
+    this.items[index] = chemicalCargo
+    return chemicalCargo
+  }
 }

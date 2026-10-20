@@ -25,4 +25,8 @@ export class ChemicalCargoRepository implements IChemicalCargoRepository {
       relations: { product: true },
     })
   }
+
+  async update(chemicalCargo: IChemicalCargo): Promise<IChemicalCargo> {
+    return this.repository.save(chemicalCargo)
+  }
 }

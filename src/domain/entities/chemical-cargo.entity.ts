@@ -36,6 +36,8 @@ export class ChemicalCargo implements IChemicalCargo {
   @Column({
     name: 'quantity',
     type: 'numeric',
+    precision: 12,
+    scale: 3,
     transformer: {
       to: (value: number) => value,
       from: (value: string) => Number(value),
