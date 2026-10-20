@@ -20,6 +20,9 @@ export const errorHandlerMap: ErrorHandlerMap = {
   ResourceNotFoundError: (error, __, reply) => {
     return reply.status(404).send({ message: error.message })
   },
+  InvalidStatusTransitionError: (error, __, reply) => {
+    return reply.status(409).send({ message: error.message })
+  },
 }
 
 export const globalErrorHandler = (
