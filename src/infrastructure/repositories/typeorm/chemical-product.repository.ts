@@ -11,24 +11,7 @@ export class ChemicalProductRepository implements IChemicalProductRepository {
     this.repository = appDataSource.getRepository(ChemicalProduct)
   }
 
-  findAll(page: number, limit: number): Promise<IChemicalProduct[]> {
-    return this.repository.find({
-      skip: (page - 1) * limit,
-      take: limit,
-    })
-  }
-
-  async findById(id: string): Promise<IChemicalProduct | null> {
-    return this.repository.findOne({
-      where: { id },
-    })
-  }
-
-  async create(chemicalProduct: IChemicalProduct): Promise<IChemicalProduct> {
-    return this.repository.save(chemicalProduct)
-  }
-
-  async update(chemicalProduct: IChemicalProduct): Promise<IChemicalProduct> {
+  create(chemicalProduct: IChemicalProduct): Promise<IChemicalProduct> {
     return this.repository.save(chemicalProduct)
   }
 }
