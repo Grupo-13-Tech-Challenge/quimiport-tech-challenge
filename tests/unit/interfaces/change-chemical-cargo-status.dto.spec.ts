@@ -4,10 +4,10 @@ import { changeChemicalCargoStatusBodySchema } from '@/interfaces/dtos/change-ch
 describe('changeChemicalCargoStatusBodySchema', () => {
   it('accepts a valid reason', () => {
     const result = changeChemicalCargoStatusBodySchema.parse({
-      reason: 'Risco ambiental',
+      reason: 'Environmental risk',
     })
 
-    expect(result.reason).toBe('Risco ambiental')
+    expect(result.reason).toBe('Environmental risk')
   })
 
   it('rejects missing reason', () => {

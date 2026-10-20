@@ -11,14 +11,20 @@ const CANCEL_ALLOWED_FROM = new Set<CargoStatus>([
   CargoStatus.BLOCKED,
 ])
 
-export function assertCanBlock(currentStatus: CargoStatus): void {
-  if (!BLOCK_ALLOWED_FROM.has(currentStatus)) {
-    throw new InvalidStatusTransitionError(currentStatus, CargoStatus.BLOCKED)
+export function assertCanBlock(currentStatus?: CargoStatus): void {
+  if (!currentStatus || !BLOCK_ALLOWED_FROM.has(currentStatus)) {
+    throw new InvalidStatusTransitionError(
+      currentStatus ?? CargoStatus.REGISTERED,
+      CargoStatus.BLOCKED,
+    )
   }
 }
 
-export function assertCanCancel(currentStatus: CargoStatus): void {
-  if (!CANCEL_ALLOWED_FROM.has(currentStatus)) {
-    throw new InvalidStatusTransitionError(currentStatus, CargoStatus.CANCELED)
+export function assertCanCancel(currentStatus?: CargoStatus): void {
+  if (!currentStatus || !CANCEL_ALLOWED_FROM.has(currentStatus)) {
+    throw new InvalidStatusTransitionError(
+      currentStatus ?? CargoStatus.REGISTERED,
+      CargoStatus.CANCELED,
+    )
   }
 }

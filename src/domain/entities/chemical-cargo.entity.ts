@@ -1,6 +1,13 @@
+import { ChemicalProduct } from '@/domain/entities/chemical-product.entity'
 import { CargoStatus } from '@/domain/enums/cargo-status.enum'
 import type { IChemicalCargo } from '@/domain/models/chemical-cargo.interface'
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
 
 @Entity('chemical_cargo')
 export class ChemicalCargo implements IChemicalCargo {
@@ -21,11 +28,20 @@ export class ChemicalCargo implements IChemicalCargo {
   })
   productId: string
 
+  @ManyToOne(() => ChemicalProduct)
+  @JoinColumn({ name: 'product_id' })
+  product?: ChemicalProduct
+
+  // NUMERIC chega do Postgres como string; o transformer converte para number
   @Column({
     name: 'quantity',
     type: 'numeric',
     precision: 12,
     scale: 3,
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string) => Number(value),
+    },
   })
   quantity: number
 
@@ -40,7 +56,7 @@ export class ChemicalCargo implements IChemicalCargo {
     type: 'varchar',
     nullable: true,
   })
-  cargoType?: string | null
+  cargoType?: string
 
   @Column({
     name: 'origin',
@@ -67,7 +83,7 @@ export class ChemicalCargo implements IChemicalCargo {
     enumName: 'cargo_status',
     default: CargoStatus.REGISTERED,
   })
-  status: CargoStatus
+  cargoStatus?: CargoStatus
 
   @Column({
     name: 'entry_date',

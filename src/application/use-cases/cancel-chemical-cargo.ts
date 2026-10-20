@@ -17,12 +17,12 @@ export class CancelChemicalCargoUseCase {
 
     if (!chemicalCargo) throw new ResourceNotFoundError()
 
-    assertCanCancel(chemicalCargo.status)
+    assertCanCancel(chemicalCargo.cargoStatus)
 
     return this.chemicalCargoRepository.update({
       ...chemicalCargo,
       id,
-      status: CargoStatus.CANCELED,
+      cargoStatus: CargoStatus.CANCELED,
       updatedAt: new Date(),
     })
   }

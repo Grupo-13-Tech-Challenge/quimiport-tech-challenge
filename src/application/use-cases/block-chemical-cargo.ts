@@ -17,12 +17,12 @@ export class BlockChemicalCargoUseCase {
 
     if (!chemicalCargo) throw new ResourceNotFoundError()
 
-    assertCanBlock(chemicalCargo.status)
+    assertCanBlock(chemicalCargo.cargoStatus)
 
     return this.chemicalCargoRepository.update({
       ...chemicalCargo,
       id,
-      status: CargoStatus.BLOCKED,
+      cargoStatus: CargoStatus.BLOCKED,
       updatedAt: new Date(),
     })
   }
