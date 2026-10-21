@@ -9,4 +9,5 @@ app
   })
   .then(() => {
     console.log(`Server is running on http://localhost:${env.PORT}`)
+    console.log(`Swagger docs on http://localhost:${env.PORT}/docs`)
   })
