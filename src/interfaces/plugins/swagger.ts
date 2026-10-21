@@ -21,8 +21,7 @@ export const swagger = fp(async function swagger(app: FastifyInstance) {
         },
         {
           name: 'chemical-cargo',
-          description:
-            'Create, query, block, release, update status, and cancel chemical cargo',
+          description: 'Query, block, and cancel chemical cargo',
         },
       ],
     },
