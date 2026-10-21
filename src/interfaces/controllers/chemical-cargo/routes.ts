@@ -1,3 +1,13 @@
+import {
+  blockedChemicalCargoResponseSchema,
+  canceledChemicalCargoResponseSchema,
+  chemicalCargoListResponseSchema,
+  chemicalCargoResponseSchema,
+  internalErrorResponseSchema,
+  invalidStatusTransitionResponseSchema,
+  notFoundErrorResponseSchema,
+  reasonValidationErrorResponseSchema,
+} from '@/interfaces/dtos/api-response.dto'
 import { changeChemicalCargoStatusBodySchema } from '@/interfaces/dtos/change-chemical-cargo-status.dto'
 import {
   idParamSchema,
@@ -19,7 +29,13 @@ export async function chemicalCargo(app: FastifyInstance) {
       schema: {
         tags: ['chemical-cargo'],
         summary: 'List chemical cargos',
+        description:
+          'Returns a page of chemical cargos and the associated product. page defaults to 1 and limit defaults to 10.',
         querystring: paginationQuerySchema,
+        response: {
+          200: chemicalCargoListResponseSchema,
+          500: internalErrorResponseSchema,
+        },
       },
     },
     findAllChemicalCargo,
@@ -31,7 +47,14 @@ export async function chemicalCargo(app: FastifyInstance) {
       schema: {
         tags: ['chemical-cargo'],
         summary: 'Find a chemical cargo by id',
+        description:
+          'Returns the cargo and its product. An unknown or invalid id responds with 404.',
         params: idParamSchema,
+        response: {
+          200: chemicalCargoResponseSchema,
+          404: notFoundErrorResponseSchema,
+          500: internalErrorResponseSchema,
+        },
       },
     },
     findChemicalCargo,
@@ -43,8 +66,17 @@ export async function chemicalCargo(app: FastifyInstance) {
       schema: {
         tags: ['chemical-cargo'],
         summary: 'Block a chemical cargo',
+        description:
+          'Blocks a cargo that is UNDER_INSPECTION. A reason is required. Any other current status responds with 409. An unknown or invalid id responds with 404.',
         params: idParamSchema,
         body: changeChemicalCargoStatusBodySchema,
+        response: {
+          200: blockedChemicalCargoResponseSchema,
+          400: reasonValidationErrorResponseSchema,
+          404: notFoundErrorResponseSchema,
+          409: invalidStatusTransitionResponseSchema,
+          500: internalErrorResponseSchema,
+        },
       },
     },
     block,
@@ -56,8 +88,17 @@ export async function chemicalCargo(app: FastifyInstance) {
       schema: {
         tags: ['chemical-cargo'],
         summary: 'Cancel a chemical cargo',
+        description:
+          'Cancels a cargo from REGISTERED, UNDER_ANALYSIS, UNDER_INSPECTION, RELEASED, or BLOCKED. A reason is required. Completed, in transit, or already canceled cargos respond with 409. An unknown or invalid id responds with 404.',
         params: idParamSchema,
         body: changeChemicalCargoStatusBodySchema,
+        response: {
+          200: canceledChemicalCargoResponseSchema,
+          400: reasonValidationErrorResponseSchema,
+          404: notFoundErrorResponseSchema,
+          409: invalidStatusTransitionResponseSchema,
+          500: internalErrorResponseSchema,
+        },
       },
     },
     cancel,
