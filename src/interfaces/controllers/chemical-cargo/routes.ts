@@ -21,6 +21,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import type { FastifyInstance } from 'fastify'
 import { block } from './block'
 import { cancel } from './cancel'
+import { createChemicalCargo } from './create-chemical-cargo'
 import { findAllChemicalCargo } from './find-all-chemical-cargo'
 import { findChemicalCargo } from './find-chemical-cargo'
 import { release } from './release'
@@ -28,6 +29,8 @@ import { updateStatus } from './update-status'
 
 export async function chemicalCargo(app: FastifyInstance) {
   const routes = app.withTypeProvider<ZodTypeProvider>()
+
+  routes.post('/chemical-cargo', createChemicalCargo)
 
   routes.get(
     '/chemical-cargo',

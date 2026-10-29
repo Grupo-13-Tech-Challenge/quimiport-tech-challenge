@@ -1,7 +1,10 @@
 import { ChemicalCargo } from '@/domain/entities/chemical-cargo.entity'
 import type { IChemicalCargo } from '@/domain/models/chemical-cargo.interface'
 import { appDataSource } from '@/infrastructure/database/typeorm'
-import type { IChemicalCargoRepository } from '@/domain/repositories/chemical-cargo.repository.interface'
+import type {
+  CreateChemicalCargoInput,
+  IChemicalCargoRepository,
+} from '@/domain/repositories/chemical-cargo.repository.interface'
 import type { Repository } from 'typeorm'
 
 export class ChemicalCargoRepository implements IChemicalCargoRepository {
@@ -46,6 +49,11 @@ export class ChemicalCargoRepository implements IChemicalCargoRepository {
   }
 
   async update(chemicalCargo: IChemicalCargo): Promise<IChemicalCargo> {
+    return this.repository.save(chemicalCargo)
+  }
+
+  async create(data: CreateChemicalCargoInput): Promise<IChemicalCargo> {
+    const chemicalCargo = this.repository.create(data)
     return this.repository.save(chemicalCargo)
   }
 }
