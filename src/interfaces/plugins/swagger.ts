@@ -22,7 +22,7 @@ export const swagger = fp(async function swagger(app: FastifyInstance) {
         {
           name: 'chemical-cargo',
           description:
-            'Query, update status, release, block, and cancel chemical cargo',
+            'Register, query, update status, release, block, and cancel chemical cargo',
         },
       ],
     },
