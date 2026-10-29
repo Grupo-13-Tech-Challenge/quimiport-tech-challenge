@@ -1,6 +1,7 @@
 import { env } from '@/env'
-import { ZodError } from 'zod'
 import type { FastifyReply, FastifyRequest } from 'fastify'
+import { hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod'
+import { ZodError } from 'zod'
 
 interface ErrorHandlerMap {
   [key: string]: (
@@ -23,6 +24,9 @@ export const errorHandlerMap: ErrorHandlerMap = {
   InvalidStatusTransitionError: (error, __, reply) => {
     return reply.status(409).send({ message: error.message })
   },
+  MissingRequiredDocumentationError: (error, __, reply) => {
+    return reply.status(409).send({ message: error.message })
+  },
 }
 
 export const globalErrorHandler = (
@@ -32,6 +36,13 @@ export const globalErrorHandler = (
 ) => {
   if (env.NODE_ENV === 'development') {
     console.error(error)
+  }
+
+  if (hasZodFastifySchemaValidationErrors(error)) {
+    return reply.status(400).send({
+      message: 'Validation Error',
+      error: error.validation,
+    })
   }
 
   const handler = errorHandlerMap[error.constructor.name]

@@ -8,6 +8,7 @@ export type CreateChemicalCargoInput = Omit<
 export interface IChemicalCargoRepository {
   findAll(page: number, limit: number): Promise<IChemicalCargo[]>
   findById(id: string): Promise<IChemicalCargo | null>
+  hasValidRequiredDocumentation(cargoId: string): Promise<boolean>
   update(chemicalCargo: IChemicalCargo): Promise<IChemicalCargo>
   create(data: CreateChemicalCargoInput): Promise<IChemicalCargo>
 }
