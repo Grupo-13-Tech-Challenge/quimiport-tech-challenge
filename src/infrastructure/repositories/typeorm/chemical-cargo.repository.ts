@@ -26,6 +26,25 @@ export class ChemicalCargoRepository implements IChemicalCargoRepository {
     })
   }
 
+  async hasValidRequiredDocumentation(cargoId: string): Promise<boolean> {
+    const rows: { total: number; valid: number }[] = await appDataSource.query(
+      `SELECT
+         COUNT(*)::int AS total,
+         COUNT(*) FILTER (
+           WHERE validation_status = 'VALID'
+             AND (expiration_date IS NULL OR expiration_date >= CURRENT_DATE)
+         )::int AS valid
+       FROM cargo_document
+       WHERE cargo_id = $1`,
+      [cargoId],
+    )
+
+    const total = Number(rows[0]?.total ?? 0)
+    const valid = Number(rows[0]?.valid ?? 0)
+
+    return total > 0 && total === valid
+  }
+
   async update(chemicalCargo: IChemicalCargo): Promise<IChemicalCargo> {
     return this.repository.save(chemicalCargo)
   }

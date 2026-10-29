@@ -85,6 +85,17 @@ export const chemicalCargoResponseSchema = z
     examples: [cargoExample],
   })
 
+export const releasedChemicalCargoResponseSchema =
+  chemicalCargoResponseSchema.meta({
+    examples: [
+      {
+        ...cargoExample,
+        cargoStatus: CargoStatus.RELEASED,
+        updatedAt: '2026-10-21T16:40:00.000Z',
+      },
+    ],
+  })
+
 export const blockedChemicalCargoResponseSchema =
   chemicalCargoResponseSchema.meta({
     examples: [
@@ -163,6 +174,10 @@ export const reasonValidationErrorResponseSchema = z
   })
 
 export const notFoundErrorResponseSchema = messageResponse('Resource not found')
+
+export const missingDocumentationResponseSchema = messageResponse(
+  'Cargo cannot be released without valid required documentation',
+)
 
 export const invalidStatusTransitionResponseSchema = messageResponse(
   'Invalid status transition from REGISTERED to BLOCKED',
