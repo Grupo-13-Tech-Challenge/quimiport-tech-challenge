@@ -1,8 +1,10 @@
 import {
   blockedChemicalCargoResponseSchema,
   canceledChemicalCargoResponseSchema,
+  cargoValidationErrorResponseSchema,
   chemicalCargoListResponseSchema,
   chemicalCargoResponseSchema,
+  inactiveProductResponseSchema,
   internalErrorResponseSchema,
   invalidStatusTransitionResponseSchema,
   missingDocumentationResponseSchema,
@@ -12,6 +14,7 @@ import {
   statusValidationErrorResponseSchema,
 } from '@/interfaces/dtos/api-response.dto'
 import { changeChemicalCargoStatusBodySchema } from '@/interfaces/dtos/change-chemical-cargo-status.dto'
+import { createChemicalCargoBodySchema } from '@/interfaces/dtos/create-chemical-cargo.dto'
 import { updateChemicalCargoStatusBodySchema } from '@/interfaces/dtos/update-chemical-cargo-status.dto'
 import {
   idParamSchema,
@@ -30,7 +33,26 @@ import { updateStatus } from './update-status'
 export async function chemicalCargo(app: FastifyInstance) {
   const routes = app.withTypeProvider<ZodTypeProvider>()
 
-  routes.post('/chemical-cargo', createChemicalCargo)
+  routes.post(
+    '/chemical-cargo',
+    {
+      schema: {
+        tags: ['chemical-cargo'],
+        summary: 'Register a chemical cargo',
+        description:
+          'Registers a cargo with status REGISTERED. The chemical product must exist and be ACTIVE. Quantity must be greater than zero and a technical responsible is required. An unknown product id responds with 404. An inactive product responds with 409.',
+        body: createChemicalCargoBodySchema,
+        response: {
+          201: chemicalCargoResponseSchema,
+          400: cargoValidationErrorResponseSchema,
+          404: notFoundErrorResponseSchema,
+          409: inactiveProductResponseSchema,
+          500: internalErrorResponseSchema,
+        },
+      },
+    },
+    createChemicalCargo,
+  )
 
   routes.get(
     '/chemical-cargo',

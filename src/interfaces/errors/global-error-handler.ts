@@ -27,6 +27,9 @@ export const errorHandlerMap: ErrorHandlerMap = {
   MissingRequiredDocumentationError: (error, __, reply) => {
     return reply.status(409).send({ message: error.message })
   },
+  InactiveProductError: (error, __, reply) => {
+    return reply.status(409).send({ message: error.message })
+  },
 }
 
 export const globalErrorHandler = (

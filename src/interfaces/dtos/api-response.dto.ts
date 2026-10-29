@@ -128,6 +128,30 @@ const messageResponse = (message: string) =>
       examples: [{ message }],
     })
 
+export const cargoValidationErrorResponseSchema = z
+  .object({
+    message: z.string(),
+    error: z.unknown().optional(),
+  })
+  .meta({
+    examples: [
+      {
+        message: 'Validation Error',
+        error: [
+          { message: 'Quantity must be greater than zero', path: ['quantity'] },
+          {
+            message: 'Technical responsible id is required',
+            path: ['technicalResponsibleId'],
+          },
+        ],
+      },
+    ],
+  })
+
+export const inactiveProductResponseSchema = messageResponse(
+  'Inactive chemical product cannot be used in a new cargo',
+)
+
 export const productValidationErrorResponseSchema = z
   .object({
     message: z.string(),
