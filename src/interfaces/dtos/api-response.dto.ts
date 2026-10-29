@@ -134,6 +134,20 @@ export const productValidationErrorResponseSchema = z
     ],
   })
 
+export const statusValidationErrorResponseSchema = z
+  .object({
+    message: z.string(),
+    error: z.unknown().optional(),
+  })
+  .meta({
+    examples: [
+      {
+        message: 'Validation Error',
+        error: [{ message: 'Status is required', path: ['status'] }],
+      },
+    ],
+  })
+
 export const reasonValidationErrorResponseSchema = z
   .object({
     message: z.string(),

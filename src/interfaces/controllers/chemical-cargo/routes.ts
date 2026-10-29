@@ -7,8 +7,10 @@ import {
   invalidStatusTransitionResponseSchema,
   notFoundErrorResponseSchema,
   reasonValidationErrorResponseSchema,
+  statusValidationErrorResponseSchema,
 } from '@/interfaces/dtos/api-response.dto'
 import { changeChemicalCargoStatusBodySchema } from '@/interfaces/dtos/change-chemical-cargo-status.dto'
+import { updateChemicalCargoStatusBodySchema } from '@/interfaces/dtos/update-chemical-cargo-status.dto'
 import {
   idParamSchema,
   paginationQuerySchema,
@@ -19,6 +21,7 @@ import { block } from './block'
 import { cancel } from './cancel'
 import { findAllChemicalCargo } from './find-all-chemical-cargo'
 import { findChemicalCargo } from './find-chemical-cargo'
+import { updateStatus } from './update-status'
 
 export async function chemicalCargo(app: FastifyInstance) {
   const routes = app.withTypeProvider<ZodTypeProvider>()
@@ -58,6 +61,28 @@ export async function chemicalCargo(app: FastifyInstance) {
       },
     },
     findChemicalCargo,
+  )
+
+  routes.patch(
+    '/chemical-cargo/:id/status',
+    {
+      schema: {
+        tags: ['chemical-cargo'],
+        summary: 'Update a chemical cargo status',
+        description:
+          'Moves a cargo only through the allowed state machine. REGISTERED can go to UNDER_ANALYSIS or CANCELED. UNDER_ANALYSIS can go to UNDER_INSPECTION or CANCELED. UNDER_INSPECTION can go to RELEASED, BLOCKED, or CANCELED. RELEASED can go to IN_TRANSIT or CANCELED. IN_TRANSIT can go to COMPLETED. BLOCKED can go to CANCELED. COMPLETED and CANCELED are terminal. Any other transition responds with 409. An unknown or invalid id responds with 404.',
+        params: idParamSchema,
+        body: updateChemicalCargoStatusBodySchema,
+        response: {
+          200: chemicalCargoResponseSchema,
+          400: statusValidationErrorResponseSchema,
+          404: notFoundErrorResponseSchema,
+          409: invalidStatusTransitionResponseSchema,
+          500: internalErrorResponseSchema,
+        },
+      },
+    },
+    updateStatus,
   )
 
   routes.patch(
