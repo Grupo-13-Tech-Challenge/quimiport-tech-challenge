@@ -24,6 +24,9 @@ export const errorHandlerMap: ErrorHandlerMap = {
   InvalidStatusTransitionError: (error, __, reply) => {
     return reply.status(409).send({ message: error.message })
   },
+  MissingRequiredDocumentationError: (error, __, reply) => {
+    return reply.status(409).send({ message: error.message })
+  },
 }
 
 export const globalErrorHandler = (

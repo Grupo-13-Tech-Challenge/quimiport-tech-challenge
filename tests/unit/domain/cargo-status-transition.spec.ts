@@ -5,9 +5,27 @@ import {
   assertCanBlock,
   assertCanCancel,
   assertCanChangeStatus,
+  assertCanRelease,
 } from '@/domain/services/cargo-status-transition'
 
 describe('cargo-status-transition', () => {
+  describe('assertCanRelease', () => {
+    it('allows release from UNDER_INSPECTION', () => {
+      expect(() => assertCanRelease(CargoStatus.UNDER_INSPECTION)).not.toThrow()
+    })
+
+    it.each([
+      CargoStatus.REGISTERED,
+      CargoStatus.BLOCKED,
+      CargoStatus.CANCELED,
+      CargoStatus.RELEASED,
+    ])('rejects release from %s', (status) => {
+      expect(() => assertCanRelease(status)).toThrow(
+        InvalidStatusTransitionError,
+      )
+    })
+  })
+
   describe('assertCanBlock', () => {
     it('allows transition from UNDER_INSPECTION to BLOCKED', () => {
       expect(() => assertCanBlock(CargoStatus.UNDER_INSPECTION)).not.toThrow()

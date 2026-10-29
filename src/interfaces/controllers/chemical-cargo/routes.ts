@@ -5,8 +5,10 @@ import {
   chemicalCargoResponseSchema,
   internalErrorResponseSchema,
   invalidStatusTransitionResponseSchema,
+  missingDocumentationResponseSchema,
   notFoundErrorResponseSchema,
   reasonValidationErrorResponseSchema,
+  releasedChemicalCargoResponseSchema,
   statusValidationErrorResponseSchema,
 } from '@/interfaces/dtos/api-response.dto'
 import { changeChemicalCargoStatusBodySchema } from '@/interfaces/dtos/change-chemical-cargo-status.dto'
@@ -21,6 +23,7 @@ import { block } from './block'
 import { cancel } from './cancel'
 import { findAllChemicalCargo } from './find-all-chemical-cargo'
 import { findChemicalCargo } from './find-chemical-cargo'
+import { release } from './release'
 import { updateStatus } from './update-status'
 
 export async function chemicalCargo(app: FastifyInstance) {
@@ -83,6 +86,26 @@ export async function chemicalCargo(app: FastifyInstance) {
       },
     },
     updateStatus,
+  )
+
+  routes.patch(
+    '/chemical-cargo/:id/release',
+    {
+      schema: {
+        tags: ['chemical-cargo'],
+        summary: 'Release a chemical cargo',
+        description:
+          'Releases a cargo that is UNDER_INSPECTION and has valid required documentation. Any other status responds with 409. A cargo without valid documentation responds with 409. An unknown or invalid id responds with 404.',
+        params: idParamSchema,
+        response: {
+          200: releasedChemicalCargoResponseSchema,
+          404: notFoundErrorResponseSchema,
+          409: missingDocumentationResponseSchema,
+          500: internalErrorResponseSchema,
+        },
+      },
+    },
+    release,
   )
 
   routes.patch(

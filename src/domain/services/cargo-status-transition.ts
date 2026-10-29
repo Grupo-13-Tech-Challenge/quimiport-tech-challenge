@@ -29,6 +29,15 @@ const STATUS_TRANSITIONS: Record<CargoStatus, readonly CargoStatus[]> = {
   [CargoStatus.CANCELED]: [],
 }
 
+export function assertCanRelease(currentStatus?: CargoStatus): void {
+  if (currentStatus !== CargoStatus.UNDER_INSPECTION) {
+    throw new InvalidStatusTransitionError(
+      currentStatus ?? CargoStatus.REGISTERED,
+      CargoStatus.RELEASED,
+    )
+  }
+}
+
 export function assertCanBlock(currentStatus?: CargoStatus): void {
   if (!currentStatus || !BLOCK_ALLOWED_FROM.has(currentStatus)) {
     throw new InvalidStatusTransitionError(
