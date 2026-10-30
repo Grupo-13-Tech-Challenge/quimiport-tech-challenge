@@ -1,5 +1,6 @@
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found-error'
-import type { CargoStatus } from '@/domain/enums/cargo-status.enum'
+import { CargoStatus } from '@/domain/enums/cargo-status.enum'
+import { MissingRequiredDocumentationError } from '@/domain/errors/missing-required-documentation-error'
 import type { IChemicalCargo } from '@/domain/models/chemical-cargo.interface'
 import type { IChemicalCargoRepository } from '@/domain/repositories/chemical-cargo.repository.interface'
 import { assertCanChangeStatus } from '@/domain/services/cargo-status-transition'
@@ -18,6 +19,13 @@ export class UpdateChemicalCargoStatusUseCase {
     if (!chemicalCargo) throw new ResourceNotFoundError()
 
     assertCanChangeStatus(chemicalCargo.cargoStatus, status)
+
+    if (status === CargoStatus.RELEASED) {
+      const hasValidDocumentation =
+        await this.chemicalCargoRepository.hasValidRequiredDocumentation(id)
+
+      if (!hasValidDocumentation) throw new MissingRequiredDocumentationError()
+    }
 
     return this.chemicalCargoRepository.update({
       ...chemicalCargo,

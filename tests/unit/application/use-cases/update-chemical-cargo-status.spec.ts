@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { ResourceNotFoundError } from '@/application/errors/resource-not-found-error'
 import { UpdateChemicalCargoStatusUseCase } from '@/application/use-cases/update-chemical-cargo-status'
 import { InvalidStatusTransitionError } from '@/domain/errors/invalid-status-transition-error'
+import { MissingRequiredDocumentationError } from '@/domain/errors/missing-required-documentation-error'
 import { CargoStatus } from '@/domain/enums/cargo-status.enum'
 import { makeChemicalCargo } from '../../../factories/make-chemical-cargo'
 import { InMemoryChemicalCargoRepository } from '../../../repositories/in-memory-chemical-cargo.repository'
@@ -38,6 +39,35 @@ describe('UpdateChemicalCargoStatusUseCase', () => {
     await expect(
       sut.handler('abc', CargoStatus.CANCELED),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
+  })
+
+  it('should release a cargo in inspection when documentation is valid', async () => {
+    const cargo = makeChemicalCargo({
+      cargoStatus: CargoStatus.UNDER_INSPECTION,
+    })
+    chemicalCargoRepository.items.push(cargo)
+    chemicalCargoRepository.documents.push({
+      cargoId: cargo.id!,
+      validationStatus: 'VALID',
+    })
+
+    const result = await sut.handler(cargo.id!, CargoStatus.RELEASED)
+
+    expect(result.cargoStatus).toBe(CargoStatus.RELEASED)
+  })
+
+  it('should reject release through status without valid documentation', async () => {
+    const cargo = makeChemicalCargo({
+      cargoStatus: CargoStatus.UNDER_INSPECTION,
+    })
+    chemicalCargoRepository.items.push(cargo)
+
+    await expect(
+      sut.handler(cargo.id!, CargoStatus.RELEASED),
+    ).rejects.toBeInstanceOf(MissingRequiredDocumentationError)
+    expect(chemicalCargoRepository.items[0]?.cargoStatus).toBe(
+      CargoStatus.UNDER_INSPECTION,
+    )
   })
 
   it('should reject moving a blocked cargo', async () => {
