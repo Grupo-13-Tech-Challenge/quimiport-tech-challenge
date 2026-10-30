@@ -207,6 +207,22 @@ export const invalidStatusTransitionResponseSchema = messageResponse(
   'Invalid status transition from REGISTERED to BLOCKED',
 )
 
+export const cargoStatusConflictResponseSchema = z
+  .object({
+    message: z.string(),
+  })
+  .meta({
+    examples: [
+      {
+        message: 'Invalid status transition from REGISTERED to BLOCKED',
+      },
+      {
+        message:
+          'Cargo cannot be released without valid required documentation',
+      },
+    ],
+  })
+
 export const internalErrorResponseSchema = messageResponse(
   'Internal Server Error',
 )
