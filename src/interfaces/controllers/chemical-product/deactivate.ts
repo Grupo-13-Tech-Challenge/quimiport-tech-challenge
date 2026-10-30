@@ -14,5 +14,10 @@ export async function deactivate(request: FastifyRequest, reply: FastifyReply) {
 
   const chemicalProduct = await deactivateChemicalProductUseCase.handler(id)
 
+  request.log.info(
+    { productId: chemicalProduct.id },
+    'Chemical product inactivated',
+  )
+
   return reply.status(200).send(chemicalProduct)
 }

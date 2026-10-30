@@ -13,5 +13,7 @@ export async function release(request: FastifyRequest, reply: FastifyReply) {
 
   const chemicalCargo = await releaseChemicalCargoUseCase.handler(id)
 
+  request.log.info({ cargoId: chemicalCargo.id }, 'Chemical cargo released')
+
   return reply.status(200).send(chemicalCargo)
 }

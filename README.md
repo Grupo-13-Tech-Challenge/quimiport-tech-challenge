@@ -23,8 +23,8 @@ A aplicação busca centralizar as informações dos produtos e das cargas, perm
 
 - **Node.js:** ambiente de execução.
 - **TypeScript:** linguagem de desenvolvimento.
-- **Fastify:** framework para construção da API.
-- **PostgreSQL:** banco de dados relacional.
+- **Fastify:** framework da API. Foi escolhido pela validação de entrada com Zod, pelo Swagger no mesmo processo e pelo log de requisição já integrado. A API obrigatória desta fase é REST.
+- **PostgreSQL:** banco relacional. A carga referencia produto, responsável técnico e documentos por chave estrangeira, e o status da carga é um enum com transições controladas pela aplicação.
 - **TypeORM:** mapeamento objeto-relacional.
 - **pg:** driver de conexão com PostgreSQL.
 - **Zod:** validação de dados.
@@ -61,6 +61,11 @@ QUIMIPORT-TECH-CHALLENGE/
 ├── package.json
 ├── package-lock.json
 ├── script.sql
+├── seed.sql
+├── Dockerfile
+├── docker-compose.yml
+├── prometheus.yml
+├── .github/workflows/ci.yml
 ├── tsconfig.json
 ├── vitest.config.ts
 └── README.md
@@ -96,6 +101,7 @@ O projeto está organizado em camadas, separando as responsabilidades de domíni
 - A liberação depende do atendimento aos requisitos documentais obrigatórios.
 - Cargas bloqueadas não podem seguir para movimentação.
 - Cargas canceladas não podem ser liberadas.
+- Uma carga em inspeção não pode ser finalizada sem passar por liberada e depois por movimentação.
 - As alterações de status devem respeitar as transições permitidas pelas regras de negócio.
 
 ### Status das cargas
@@ -111,43 +117,39 @@ Os status previstos para o gerenciamento das cargas químicas são:
 - Finalizada
 - Cancelada
 
-O fluxo de status deve impedir transições incompatíveis com as regras de negócio definidas para a aplicação.
+Na API esses status são `REGISTERED`, `UNDER_ANALYSIS`, `UNDER_INSPECTION`, `RELEASED`, `BLOCKED`, `IN_TRANSIT`, `COMPLETED` e `CANCELED`. A carga nasce `REGISTERED`. A tabela de transições permitidas e proibidas está em [`docs/06-diagramas/fluxo-status-carga/README.md`](docs/06-diagramas/fluxo-status-carga/README.md).
 
 ## Endpoints da API
 
-Os endpoints abaixo representam as operações previstas para o sistema. Os caminhos e métodos devem corresponder às rotas efetivamente implementadas no código.
+Os caminhos estão em inglês. O desafio sugere rotas em português, e a API mantém o mesmo recurso e o mesmo método.
 
 ### Produtos químicos
 
 | Método | Endpoint | Descrição |
 |---|---|---|
-| POST | `/produtos-quimicos` | Cadastrar produto químico |
-| GET | `/produtos-quimicos` | Listar produtos químicos |
-| GET | `/produtos-quimicos/:id` | Consultar produto por ID |
-| PUT | `/produtos-quimicos/:id` | Atualizar produto químico |
-| PATCH | `/produtos-quimicos/:id/inativar` | Inativar produto químico |
+| POST | `/chemical-product` | Cadastrar produto químico |
+| GET | `/chemical-product` | Listar produtos químicos |
+| GET | `/chemical-product/:id` | Consultar produto por ID |
+| PUT | `/chemical-product/:id` | Atualizar produto químico |
+| PATCH | `/chemical-product/:id/inactivate` | Inativar produto químico |
 
 ### Cargas químicas
 
 | Método | Endpoint | Descrição |
 |---|---|---|
-| POST | `/cargas-quimicas` | Cadastrar carga química |
-| GET | `/cargas-quimicas` | Listar cargas químicas |
-| GET | `/cargas-quimicas/:id` | Consultar carga por ID |
-| PATCH | `/cargas-quimicas/:id/status` | Atualizar status da carga |
-| PATCH | `/cargas-quimicas/:id/bloquear` | Bloquear carga |
-| PATCH | `/cargas-quimicas/:id/liberar` | Liberar carga |
-| PATCH | `/cargas-quimicas/:id/cancelar` | Cancelar carga |
-
-**Observação:** confira os endpoints acima com as rotas existentes no projeto antes da entrega.
+| POST | `/chemical-cargo` | Cadastrar carga química |
+| GET | `/chemical-cargo` | Listar cargas químicas |
+| GET | `/chemical-cargo/:id` | Consultar carga por ID |
+| PATCH | `/chemical-cargo/:id/status` | Atualizar status da carga |
+| PATCH | `/chemical-cargo/:id/block` | Bloquear carga |
+| PATCH | `/chemical-cargo/:id/release` | Liberar carga |
+| PATCH | `/chemical-cargo/:id/cancel` | Cancelar carga |
 
 ## Banco de dados
 
 O projeto utiliza PostgreSQL como banco de dados relacional, com TypeORM e o driver `pg` para integração com a aplicação.
 
-O repositório contém o arquivo `script.sql`, destinado a comandos SQL relacionados à estrutura ou à manipulação dos dados.
-
-O modelo de persistência deve contemplar os produtos químicos, as cargas, o relacionamento entre eles e as informações necessárias para o controle das operações.
+O arquivo `script.sql` cria as tabelas `chemical_product`, `technical_responsible`, `chemical_cargo` e `cargo_document`, com as chaves estrangeiras da carga para o produto e para o responsável técnico, e do documento para a carga. O status do produto e o status da carga são enums no banco. O arquivo `seed.sql` insere um produto ativo, um responsável técnico e uma carga em inspeção com documento válido, para o cadastro e a liberação poderem ser exercitados num banco novo.
 
 ## Instalação e execução
 
@@ -160,11 +162,9 @@ O modelo de persistência deve contemplar os produtos químicos, as cargas, o re
 ### 1. Clonar o repositório
 
 ```bash
-git clone <URL_DO_REPOSITORIO>
-cd QUIMIPORT-TECH-CHALLENGE
+git clone git@github.com:Grupo-13-Tech-Challenge/quimiport-tech-challenge.git
+cd quimiport-tech-challenge
 ```
-
-Substitua `<URL_DO_REPOSITORIO>` pelo endereço real do repositório Git.
 
 ### 2. Instalar as dependências
 
@@ -174,11 +174,19 @@ npm install
 
 ### 3. Configurar as variáveis de ambiente
 
-Utilize o arquivo `.env.example` como referência para configurar o arquivo `.env`.
+Copie `.env.example` para `.env`. A aplicação lê:
 
-Preencha as variáveis necessárias para a conexão com o banco de dados e para a execução da aplicação.
+| Variável | Uso |
+|---|---|
+| `NODE_ENV` | `development`, `production` ou `test`. O padrão é `development`. |
+| `PORT` | Porta HTTP da API. No exemplo, `3000`. |
+| `DATABASE_USER` | Usuário do PostgreSQL. |
+| `DATABASE_PASSWORD` | Senha do PostgreSQL. |
+| `DATABASE_HOST` | No Compose, o serviço usa `postgres`. Na máquina, use `localhost`. |
+| `DATABASE_NAME` | Nome do banco. No exemplo, `quimiport`. |
+| `DATABASE_PORT` | No Compose, `5432`. Na máquina, a porta publicada é `5433`. |
 
-Não compartilhe senhas ou credenciais no repositório.
+O arquivo `.env` não entra no Git. O exemplo traz só os valores de desenvolvimento.
 
 ### 4. Executar em desenvolvimento
 
@@ -260,23 +268,27 @@ O comando de formatação pode alterar os arquivos abrangidos pela configuraçã
 
 ## Documentação da API
 
-O diretório `docs/` está destinado à documentação complementar do projeto.
+Com a API no ar, o Swagger fica em [http://localhost:3000/docs](http://localhost:3000/docs). Ele lista os endpoints, os corpos, os exemplos e os códigos de erro. As regras de status estão em [`docs/06-diagramas/fluxo-status-carga/README.md`](docs/06-diagramas/fluxo-status-carga/README.md).
 
-A documentação da API deve apresentar os endpoints implementados, métodos HTTP, parâmetros, exemplos de requisições e respostas, códigos de erro e regras de negócio relevantes.
-
-Caso exista uma ferramenta de documentação interativa configurada, como Swagger, seu endereço de acesso deverá ser informado nesta seção.
+O Fastify registra cada requisição. Cadastro de produto, inativação, registro de carga, mudança de status, liberação, bloqueio e cancelamento também geram uma linha de log depois que a operação é gravada.
 
 ## Docker
 
-Caso a execução com Docker faça parte da implementação, devem ser disponibilizados os arquivos de configuração necessários, como `Dockerfile` e `docker-compose.yml`, acompanhados das instruções para executar a API e o banco de dados.
+O `Dockerfile` gera a imagem da API. O `docker-compose.yml` sobe a API, o PostgreSQL, o Prometheus e o Grafana. Na primeira criação do volume, o Postgres executa `script.sql` e `seed.sql`.
 
-Os comandos de inicialização e encerramento devem ser documentados após a configuração desses arquivos.
+```bash
+docker compose up -d --build
+```
+
+A API fica em [http://localhost:3000](http://localhost:3000) e a documentação em [http://localhost:3000/docs](http://localhost:3000/docs). O Prometheus usa a porta `9090` e o Grafana a porta `3001`.
+
+```bash
+docker compose down
+```
 
 ## Integração contínua
 
-A integração contínua pode automatizar a instalação das dependências, a análise estática do código e a execução dos testes.
-
-Caso o GitHub Actions esteja configurado no repositório, esta seção deverá apresentar o workflow utilizado e as verificações executadas pelo pipeline.
+O workflow `.github/workflows/ci.yml` roda em push para `develop` e `master`, e em pull request. O job `Install, build and test` instala as dependências, faz o typecheck, gera o build e executa os testes. O job `Docker build and compose` valida o Compose, sobe a API com o Postgres e consulta `/docs`. Não há deploy nesta fase.
 
 ## Equipe
 

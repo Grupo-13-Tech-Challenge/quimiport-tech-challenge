@@ -1,41 +1,51 @@
 # Fluxo de Transição de Status da Carga Química
 
-![Fluxo de Transição de Status da Carga Química](./diagrama.png)
+A carga nasce com status `REGISTERED`. O cliente não escolhe o status no cadastro. A máquina abaixo é a implementada na API e segue o controle de status da Fase 2.
 
-O fluxo abaixo representa exclusivamente os estados da **Carga Química** definidos pelos casos de uso atuais.
-
-## Estados
-
-| Status | Significado |
+| Status na API | Status no desafio |
 |---|---|
-| `PENDENTE_DOCUMENTACAO` | Estado inicial após o registro da carga. |
-| `EM_INSPECAO` | Carga com inspeção solicitada e em processo de avaliação. |
-| `LIBERADA` | Carga autorizada pelo Gestor Operacional após atender às condições obrigatórias. |
-| `BLOQUEADA` | Carga impedida de movimentação/liberação. |
-| `CANCELADA` | Ciclo de vida encerrado por cancelamento. |
+| `REGISTERED` | Registrada |
+| `UNDER_ANALYSIS` | Em análise |
+| `UNDER_INSPECTION` | Em inspeção |
+| `RELEASED` | Liberada |
+| `BLOCKED` | Bloqueada |
+| `IN_TRANSIT` | Em movimentação |
+| `COMPLETED` | Finalizada |
+| `CANCELED` | Cancelada |
 
-## Observação sobre a documentação
+## Fluxo principal
 
-`APROVADO` é um status da **validação documental**, e não um valor de `StatusCarga`.
+`REGISTERED` → `UNDER_ANALYSIS` → `UNDER_INSPECTION` → `RELEASED` → `IN_TRANSIT` → `COMPLETED`
 
-Por isso, `DOCUMENTACAO_APROVADA` não foi mantido como estado da máquina de estados da Carga Química. A documentação aprovada funciona como pré-condição para `Solicitar Inspeção` e para `Liberar Carga`.
+## Transições permitidas
 
-## Transições modeladas
+| Estado atual | Próximo estado | Condição |
+|---|---|---|
+| `REGISTERED` | `UNDER_ANALYSIS` | Transição da máquina |
+| `REGISTERED` | `CANCELED` | Motivo informado no cancelamento |
+| `UNDER_ANALYSIS` | `UNDER_INSPECTION` | Transição da máquina |
+| `UNDER_ANALYSIS` | `CANCELED` | Motivo informado no cancelamento |
+| `UNDER_INSPECTION` | `RELEASED` | Documentação obrigatória válida e não vencida |
+| `UNDER_INSPECTION` | `BLOCKED` | Motivo informado no bloqueio |
+| `UNDER_INSPECTION` | `CANCELED` | Motivo informado no cancelamento |
+| `RELEASED` | `IN_TRANSIT` | Transição da máquina |
+| `RELEASED` | `CANCELED` | Motivo informado no cancelamento |
+| `BLOCKED` | `CANCELED` | Motivo informado no cancelamento |
+| `IN_TRANSIT` | `COMPLETED` | Transição da máquina |
 
-| Estado atual | Operação | Condição | Próximo estado |
-|---|---|---|---|
-| criação | Registrar Carga Química | cadastro válido | `PENDENTE_DOCUMENTACAO` |
-| `PENDENTE_DOCUMENTACAO` | Solicitar Inspeção | documentação preliminar habilitada | `EM_INSPECAO` |
-| `EM_INSPECAO` | Liberar Carga Química | documentação aprovada + parecer favorável | `LIBERADA` |
-| `PENDENTE_DOCUMENTACAO` | Bloquear Carga Química | bloqueio válido | `BLOQUEADA` |
-| `EM_INSPECAO` | Bloquear Carga Química | bloqueio válido | `BLOQUEADA` |
-| `PENDENTE_DOCUMENTACAO` | Cancelar Carga Química | cancelamento válido | `CANCELADA` |
-| `EM_INSPECAO` | Cancelar Carga Química | cancelamento válido | `CANCELADA` |
-| `BLOQUEADA` | Cancelar Carga Química | cancelamento válido | `CANCELADA` |
+`COMPLETED` e `CANCELED` são estados terminais. Nenhuma transição sai deles.
 
-## Transições não previstas nesta fase
+A passagem para `RELEASED` pelo `PATCH /chemical-cargo/:id/status` usa a mesma condição do `PATCH /chemical-cargo/:id/release`: sem documentação válida a API responde 409 e o status não muda.
 
-- `LIBERADA → CANCELADA`
-- `CANCELADA → qualquer outro estado`
-- `BLOQUEADA → LIBERADA`
-- desbloqueio/reabertura da carga
+## Transições proibidas
+
+| Estado atual | Destino recusado |
+|---|---|
+| `CANCELED` | `RELEASED` |
+| `COMPLETED` | `IN_TRANSIT` |
+| `BLOCKED` | `IN_TRANSIT` |
+| `REGISTERED` | `COMPLETED` |
+| `UNDER_INSPECTION` | `COMPLETED` |
+| `RELEASED` | `REGISTERED` |
+
+`UNDER_INSPECTION` não vai direto para `COMPLETED`. O caminho passa por `RELEASED` e depois `IN_TRANSIT`. `BLOCKED` só pode ir para `CANCELED`.
