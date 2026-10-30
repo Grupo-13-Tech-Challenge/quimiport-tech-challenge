@@ -274,9 +274,12 @@ O Fastify registra cada requisição. Cadastro de produto, inativação, registr
 
 ## Docker
 
+Para subir o projeto basta o Docker. Não é preciso instalar Node.js nem PostgreSQL na máquina.
+
 O `Dockerfile` gera a imagem da API. O `docker-compose.yml` sobe a API, o PostgreSQL, o Prometheus e o Grafana. Na primeira criação do volume, o Postgres executa `script.sql` e `seed.sql`.
 
 ```bash
+cp .env.example .env
 docker compose up -d --build
 ```
 
