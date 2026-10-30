@@ -1,178 +1,293 @@
-# QuimiPort
-
-> Sistema para gestão de cargas químicas em contexto portuário.
-
-**FIAP Pós Tech — Full Stack Development**  
-**Tech Challenge — Fase 1**
+# QuimiPort — API de Gestão de Cargas Químicas
 
 ## Sobre o projeto
 
-O **QuimiPort** é uma proposta de aplicação full stack para gerenciamento de cargas químicas em ambiente portuário, inspirada em operações logísticas do Porto de Santos.
+O **QuimiPort** é uma API REST desenvolvida como parte do Tech Challenge da Pós-Tech FIAP em Full Stack Development. O projeto tem como objetivo auxiliar no gerenciamento de produtos químicos e cargas químicas em contexto portuário, aplicando regras de negócio relacionadas à segurança, documentação e controle operacional.
 
-Nesta primeira fase, o projeto está concentrado na compreensão do domínio, modelagem com Domain Driven Design (DDD), regras de negócio, casos de uso, arquitetura, organização do projeto e planejamento de qualidade. Não há necessidade de frontend, backend ou banco de dados funcional nesta etapa.
+A aplicação busca centralizar as informações dos produtos e das cargas, permitindo o gerenciamento dos dados e o controle das operações conforme as regras definidas para o domínio.
 
-O objetivo central é evitar que cargas químicas sejam movimentadas sem atender aos requisitos de classificação de risco, documentação, responsabilidade técnica, inspeção e demais regras de segurança definidas pelo domínio.
+## Objetivos
 
-## Navegação
+- Gerenciar produtos químicos.
+- Cadastrar e consultar cargas químicas.
+- Associar cargas aos respectivos produtos.
+- Controlar quantidade, unidade, origem, destino e responsável técnico.
+- Validar a documentação necessária para liberação.
+- Controlar os status das cargas.
+- Implementar operações de bloqueio, liberação e cancelamento.
+- Garantir a persistência dos dados.
+- Aplicar uma arquitetura organizada em camadas.
+- Desenvolver testes automatizados.
 
-| Área | Documento |
-|---|---|
-| Entendimento do domínio | [`docs/01-dominio/entendimento-do-dominio.md`](./docs/01-dominio/entendimento-do-dominio.md) |
-| Linguagem ubíqua | [`docs/01-dominio/linguagem-ubiqua.md`](./docs/01-dominio/linguagem-ubiqua.md) |
-| Entidades | [`docs/01-dominio/entidades.md`](./docs/01-dominio/entidades.md) |
-| Objetos de valor | [`docs/01-dominio/objetos-de-valor.md`](./docs/01-dominio/objetos-de-valor.md) |
-| Agregados | [`docs/01-dominio/agregados.md`](./docs/01-dominio/agregados.md) |
-| Regras de negócio | [`docs/01-dominio/regras-de-negocio.md`](./docs/01-dominio/regras-de-negocio.md) |
-| Casos de uso | [`docs/02-casos-de-uso/README.md`](./docs/02-casos-de-uso/README.md) |
-| Arquitetura proposta | [`docs/03-arquitetura/arquitetura-proposta.md`](./docs/03-arquitetura/arquitetura-proposta.md) |
-| Organização do projeto | [`docs/03-arquitetura/organizacao-projeto.md`](./docs/03-arquitetura/organizacao-projeto.md) |
-| Decisões arquiteturais | [`docs/03-arquitetura/decisoes-arquiteturais.md`](./docs/03-arquitetura/decisoes-arquiteturais.md) |
-| Plano de qualidade | [`docs/04-qualidade/plano-de-qualidade.md`](./docs/04-qualidade/plano-de-qualidade.md) |
-| JavaScript / TypeScript | [`docs/05-typescript/estrategia-javascript-typescript.md`](./docs/05-typescript/estrategia-javascript-typescript.md) |
-| Diagramas | [`docs/06-diagramas/README.md`](./docs/06-diagramas/README.md) |
-| Roteiro do vídeo | [`docs/07-video/roteiro-video.md`](./docs/07-video/roteiro-video.md) |
-| Pendências | [`PENDENCIAS.md`](./PENDENCIAS.md) |
+## Tecnologias utilizadas
 
-## Usuários envolvidos
+- **Node.js:** ambiente de execução.
+- **TypeScript:** linguagem de desenvolvimento.
+- **Fastify:** framework para construção da API.
+- **PostgreSQL:** banco de dados relacional.
+- **TypeORM:** mapeamento objeto-relacional.
+- **pg:** driver de conexão com PostgreSQL.
+- **Zod:** validação de dados.
+- **Vitest:** testes automatizados.
+- **tsx:** execução do TypeScript durante o desenvolvimento.
+- **tsup:** compilação da aplicação.
+- **ESLint:** análise estática do código.
+- **Prettier:** formatação do código.
+- **dotenv:** gerenciamento de variáveis de ambiente.
 
-- Operador Portuário
-- Responsável Técnico
-- Analista de Documentação
-- Analista de Qualidade / Segurança
-- Gestor Operacional
-- Administrador do Sistema
-
-## Principais processos
-
-1. Homologação e cadastro de Produtos Químicos.
-2. Registro e abertura de Cargas Químicas.
-3. Gestão e validação de documentação obrigatória.
-4. Inspeção e validação de segurança.
-5. Decisão de liberação ou bloqueio.
-6. Monitoramento do ciclo de vida e histórico.
-
-## Modelagem DDD
-
-A modelagem contempla:
-
-- Entidades
-- Objetos de Valor
-- Agregados
-- Casos de uso
-- Regras de negócio
-- Linguagem ubíqua
-
-A **Carga Química** é o agregado principal da proposta, pois concentra o ciclo de vida operacional e protege regras relacionadas ao produto associado, quantidade, documentação, responsável técnico, inspeção, status, liberação, bloqueio, cancelamento e histórico.
-
-## Casos de uso
-
-| ID | Caso de uso | Ator / acionamento |
-|---|---|---|
-| UC01 | Cadastrar Produto Químico | Administrador do Sistema |
-| UC02 | Inativar Produto Químico | Administrador do Sistema |
-| UC03 | Registrar Carga Química | Operador Portuário |
-| UC04 | Validar Documentação da Carga | Analista de Documentação |
-| UC05 | Solicitar Inspeção | Operador Portuário |
-| UC05B | Validar Inspeção | Analista de Qualidade / Segurança |
-| UC06 | Liberar Carga Química | Gestor Operacional |
-| UC07 | Bloquear Carga Química | Gestor Operacional |
-| UC08 | Atualizar Status da Carga | Interno, sem ator direto |
-| UC09 | Cancelar Carga Química | Operador Portuário |
-| UC10 | Consultar Cargas por Status | Perfis autorizados, incluindo Responsável Técnico |
-| UC11 | Consultar Histórico da Carga | Operador, Analistas, Gestor e Administrador |
-
-## Regras de negócio centrais
-
-- Produto Químico deve possuir nome e classe de risco.
-- Produto Químico inativo não pode ser utilizado em novas cargas.
-- Carga Química deve possuir Produto Químico associado e ativo.
-- Carga Química deve possuir classificação de risco válida.
-- Quantidade da carga deve ser maior que zero.
-- Toda carga deve possuir Responsável Técnico.
-- Documentação obrigatória deve estar aprovada e válida antes da liberação.
-- Documentos vencidos impedem a liberação.
-- Carga precisa atender às condições documentais antes da inspeção.
-- Inspeção precisa possuir parecer favorável para permitir a liberação.
-- Carga bloqueada não pode ser movimentada ou liberada.
-- Carga cancelada não pode ser movimentada ou liberada.
-- Transições de status devem respeitar a máquina de estados.
-- Consultas devem respeitar o escopo de visualização do usuário.
-- Histórico de eventos deve ser imutável.
-
-## Ciclo de vida da carga
-
-Fluxo principal:
+## Estrutura do projeto
 
 ```text
-PENDENTE_DOCUMENTACAO
-          ↓
-     EM_INSPECAO
-          ↓
-       LIBERADA
+QUIMIPORT-TECH-CHALLENGE/
+├── docs/
+├── src/
+│   ├── application/
+│   ├── domain/
+│   ├── env/
+│   ├── infrastructure/
+│   ├── interfaces/
+│   │   ├── controllers/
+│   │   ├── dtos/
+│   │   └── errors/
+│   ├── shared/
+│   ├── app.ts
+│   └── server.ts
+├── tests/
+├── .env
+├── .env.example
+├── .gitignore
+├── .prettierrc
+├── eslint.config.js
+├── package.json
+├── package-lock.json
+├── script.sql
+├── tsconfig.json
+├── vitest.config.ts
+└── README.md
 ```
-
-Estados adicionais previstos:
-
-```text
-BLOQUEADA
-CANCELADA
-```
-
-`APROVADO` pertence ao status da validação documental e não ao `StatusCarga`.
-
-A atualização de status não é tratada como uma seleção arbitrária feita por um ator. Uma operação de negócio válida provoca uma transição e o QuimiPort valida a mudança por meio da máquina de estados.
-
-📄 [Ver fluxo completo de transição de status](./docs/06-diagramas/fluxo-status-carga/)
 
 ## Arquitetura
 
-O **backend** será inicialmente um **monólito modular em camadas**, com princípios de DDD e Clean Architecture:
+O projeto está organizado em camadas, separando as responsabilidades de domínio, aplicação, infraestrutura e interfaces, com o objetivo de facilitar a manutenção e a evolução do sistema.
 
-```text
-Interfaces
-    ↓
-Application
-    ↓
-Domain
-    ↑
-Infrastructure
+- **Domain:** concentra as entidades, os conceitos e as regras de negócio do domínio de cargas químicas.
+- **Application:** organiza os casos de uso e a coordenação das operações da aplicação.
+- **Infrastructure:** reúne os componentes relacionados à infraestrutura, incluindo o acesso aos dados.
+- **Interfaces:** contém controllers, DTOs e componentes relacionados à comunicação com a aplicação e ao tratamento de erros.
+- **Shared:** reúne recursos compartilhados entre diferentes partes do sistema.
+- **Tests:** contém os testes automatizados.
+- **Docs:** armazena a documentação complementar.
+- **app.ts:** arquivo relacionado à configuração da aplicação.
+- **server.ts:** arquivo de inicialização do servidor.
+
+## Regras de negócio
+
+### Produtos químicos
+
+- O produto deve possuir nome e classificação de risco válidos.
+- Produtos inativos não podem ser associados a novas cargas.
+- Os dados devem ser validados antes de serem persistidos.
+
+### Cargas químicas
+
+- Toda carga deve estar associada a um produto válido e ativo.
+- A quantidade deve ser maior que zero.
+- O responsável técnico deve ser informado.
+- A liberação depende do atendimento aos requisitos documentais obrigatórios.
+- Cargas bloqueadas não podem seguir para movimentação.
+- Cargas canceladas não podem ser liberadas.
+- As alterações de status devem respeitar as transições permitidas pelas regras de negócio.
+
+### Status das cargas
+
+Os status previstos para o gerenciamento das cargas químicas são:
+
+- Registrada
+- Em análise
+- Em inspeção
+- Liberada
+- Bloqueada
+- Em movimentação
+- Finalizada
+- Cancelada
+
+O fluxo de status deve impedir transições incompatíveis com as regras de negócio definidas para a aplicação.
+
+## Endpoints da API
+
+Os endpoints abaixo representam as operações previstas para o sistema. Os caminhos e métodos devem corresponder às rotas efetivamente implementadas no código.
+
+### Produtos químicos
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| POST | `/produtos-quimicos` | Cadastrar produto químico |
+| GET | `/produtos-quimicos` | Listar produtos químicos |
+| GET | `/produtos-quimicos/:id` | Consultar produto por ID |
+| PUT | `/produtos-quimicos/:id` | Atualizar produto químico |
+| PATCH | `/produtos-quimicos/:id/inativar` | Inativar produto químico |
+
+### Cargas químicas
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| POST | `/cargas-quimicas` | Cadastrar carga química |
+| GET | `/cargas-quimicas` | Listar cargas químicas |
+| GET | `/cargas-quimicas/:id` | Consultar carga por ID |
+| PATCH | `/cargas-quimicas/:id/status` | Atualizar status da carga |
+| PATCH | `/cargas-quimicas/:id/bloquear` | Bloquear carga |
+| PATCH | `/cargas-quimicas/:id/liberar` | Liberar carga |
+| PATCH | `/cargas-quimicas/:id/cancelar` | Cancelar carga |
+
+**Observação:** confira os endpoints acima com as rotas existentes no projeto antes da entrega.
+
+## Banco de dados
+
+O projeto utiliza PostgreSQL como banco de dados relacional, com TypeORM e o driver `pg` para integração com a aplicação.
+
+O repositório contém o arquivo `script.sql`, destinado a comandos SQL relacionados à estrutura ou à manipulação dos dados.
+
+O modelo de persistência deve contemplar os produtos químicos, as cargas, o relacionamento entre eles e as informações necessárias para o controle das operações.
+
+## Instalação e execução
+
+### Pré-requisitos
+
+- Node.js instalado.
+- npm.
+- PostgreSQL configurado e acessível pela aplicação.
+
+### 1. Clonar o repositório
+
+```bash
+git clone <URL_DO_REPOSITORIO>
+cd QUIMIPORT-TECH-CHALLENGE
 ```
 
-- `domain/`: núcleo do negócio.
-- `application/`: coordenação dos casos de uso.
-- `interfaces/`: entrada da aplicação, como controllers e rotas futuras.
-- `infrastructure/`: persistência, repositórios e integrações.
-- `shared/`: recursos realmente genéricos e reutilizáveis dentro do backend.
-- `tests/`: testes unitários e, futuramente, integração.
+Substitua `<URL_DO_REPOSITORIO>` pelo endereço real do repositório Git.
 
-Frontend, backend e mobile serão mantidos em monorepos independentes e se comunicarão por contratos de API.
+### 2. Instalar as dependências
 
-## Diagramas obrigatórios
+```bash
+npm install
+```
 
-Para a entrega da fase, devem estar presentes:
+### 3. Configurar as variáveis de ambiente
 
-- [**Diagrama de Domínio (Agregados / Entidades)**](./docs/06-diagramas/diagrama-dominio/)
-- [**Fluxo de Transição de Status da Carga Química**](./docs/06-diagramas/fluxo-status-carga/)
+Utilize o arquivo `.env.example` como referência para configurar o arquivo `.env`.
 
-Os demais diagramas são complementares.
+Preencha as variáveis necessárias para a conexão com o banco de dados e para a execução da aplicação.
 
-## Integrantes
+Não compartilhe senhas ou credenciais no repositório.
 
-| Integrante | RM |
-|---|---|
-| Bruno Pioltini Paiva | RM375998​
-| Ebert de Carvalho Rodrigues Neto | RM375253​
-| Leandro Cavalcanti de Souza Lima | RM376777​
-| Milena Porto Coyado | RM377078​
-| Vinicius Silva Santos | RM375576​
+### 4. Executar em desenvolvimento
 
+```bash
+npm run start:dev
+```
 
-## Vídeo Demonstrativo
+Esse comando utiliza `tsx watch` para iniciar o servidor e acompanhar alterações nos arquivos durante o desenvolvimento.
 
-**Acesse aqui:** https://drive.google.com/file/d/1EOIrPqv-O8w-J40VcYWlb0fkAHQqgbYm/view?usp=drive_link
+### 5. Gerar o build
+
+```bash
+npm run build
+```
+
+O comando utiliza `tsup` para gerar os arquivos compilados no diretório `build/`.
+
+### 6. Executar a aplicação compilada
+
+```bash
+npm start
+```
+
+Execute esse comando após gerar o build e confirmar que o arquivo `build/server.js` foi produzido corretamente.
+
+## Testes automatizados
+
+O projeto utiliza Vitest para executar os testes automatizados.
+
+### Executar os testes
+
+```bash
+npm test
+```
+
+### Executar os testes em modo de acompanhamento
+
+```bash
+npm run test:watch
+```
+
+### Gerar relatório de cobertura
+
+```bash
+npm run test:coverage
+```
+
+Os testes devem validar os principais comportamentos e regras de negócio da aplicação, incluindo:
+
+- Cadastro e validação de produtos químicos.
+- Validação de campos obrigatórios.
+- Cadastro de cargas químicas.
+- Impedimento de associação com produtos inativos.
+- Validação de quantidade maior que zero.
+- Requisitos documentais para liberação.
+- Atualização de status.
+- Transições permitidas e proibidas.
+- Bloqueio e cancelamento de cargas.
+
+A cobertura efetiva depende dos testes implementados no diretório `tests/`.
+
+## Qualidade e padronização do código
+
+O projeto utiliza ESLint e Prettier para auxiliar na qualidade e na padronização do código.
+
+### Executar o ESLint
+
+```bash
+npm run lint
+```
+
+### Formatar os arquivos
+
+```bash
+npm run format
+```
+
+O comando de formatação pode alterar os arquivos abrangidos pela configuração do Prettier.
+
+## Documentação da API
+
+O diretório `docs/` está destinado à documentação complementar do projeto.
+
+A documentação da API deve apresentar os endpoints implementados, métodos HTTP, parâmetros, exemplos de requisições e respostas, códigos de erro e regras de negócio relevantes.
+
+Caso exista uma ferramenta de documentação interativa configurada, como Swagger, seu endereço de acesso deverá ser informado nesta seção.
+
+## Docker
+
+Caso a execução com Docker faça parte da implementação, devem ser disponibilizados os arquivos de configuração necessários, como `Dockerfile` e `docker-compose.yml`, acompanhados das instruções para executar a API e o banco de dados.
+
+Os comandos de inicialização e encerramento devem ser documentados após a configuração desses arquivos.
+
+## Integração contínua
+
+A integração contínua pode automatizar a instalação das dependências, a análise estática do código e a execução dos testes.
+
+Caso o GitHub Actions esteja configurado no repositório, esta seção deverá apresentar o workflow utilizado e as verificações executadas pelo pipeline.
+
+## Equipe
+
+- **Bruno Pioltini Paiva** — RM375998
+- **Ebert de Carvalho Rodrigues Neto** — RM375253
+- **Leandro Cavalcanti de Souza Lima** — RM376777
+- **Milena Porto Coyado** — RM377078
+- **Vinicius Silva Santos** — RM375576
 
 ## Instituição
 
 **FIAP — Pós Tech**  
 **Curso:** Full Stack Development  
-**Tech Challenge:** Fase 1
+**Tech Challenge:** Fase 2
