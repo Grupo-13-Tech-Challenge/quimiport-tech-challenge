@@ -15,5 +15,7 @@ export async function cancel(request: FastifyRequest, reply: FastifyReply) {
 
   const chemicalCargo = await cancelChemicalCargoUseCase.handler(id, reason)
 
+  request.log.info({ cargoId: chemicalCargo.id }, 'Chemical cargo canceled')
+
   return reply.status(200).send(chemicalCargo)
 }

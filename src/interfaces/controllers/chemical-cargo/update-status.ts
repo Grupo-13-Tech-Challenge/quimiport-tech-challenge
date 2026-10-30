@@ -22,5 +22,10 @@ export async function updateStatus(
     status,
   )
 
+  request.log.info(
+    { cargoId: chemicalCargo.id, status: chemicalCargo.cargoStatus },
+    'Chemical cargo status updated',
+  )
+
   return reply.status(200).send(chemicalCargo)
 }

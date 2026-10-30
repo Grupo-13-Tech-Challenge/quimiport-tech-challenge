@@ -15,5 +15,7 @@ export async function block(request: FastifyRequest, reply: FastifyReply) {
 
   const chemicalCargo = await blockChemicalCargoUseCase.handler(id, reason)
 
+  request.log.info({ cargoId: chemicalCargo.id }, 'Chemical cargo blocked')
+
   return reply.status(200).send(chemicalCargo)
 }

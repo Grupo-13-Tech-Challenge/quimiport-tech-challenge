@@ -11,5 +11,14 @@ export async function createChemicalCargo(
   const createChemicalCargoUseCase = makeCreateChemicalCargoUseCase()
   const chemicalCargo = await createChemicalCargoUseCase.handler(body)
 
+  request.log.info(
+    {
+      cargoId: chemicalCargo.id,
+      cargoCode: chemicalCargo.cargoCode,
+      productId: chemicalCargo.productId,
+    },
+    'Chemical cargo registered',
+  )
+
   return reply.status(201).send(chemicalCargo)
 }
