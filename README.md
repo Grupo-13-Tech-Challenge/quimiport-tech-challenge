@@ -293,6 +293,10 @@ docker compose down
 
 O workflow `.github/workflows/ci.yml` roda em push para `develop` e `master`, e em pull request. O job `Install, build and test` instala as dependências, faz o typecheck, gera o build e executa os testes. O job `Docker build and compose` valida o Compose, sobe a API com o Postgres e consulta `/docs`. Não há deploy nesta fase.
 
+## Vídeo demonstrativo
+
+O vídeo da Fase 2 está em [Google Drive](https://drive.google.com/drive/folders/1VSUcNVkowS6I7AOsMVqYrRp7nT8MbnbF?hl=pt-br).
+
 ## Equipe
 
 - **Bruno Pioltini Paiva** — RM375998
