@@ -9,5 +9,10 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
 
   const chemicalProduct = await createChemicalProductUseCase.handler(body)
 
+  request.log.info(
+    { productId: chemicalProduct.id, name: chemicalProduct.name },
+    'Chemical product created',
+  )
+
   return reply.status(201).send(chemicalProduct)
 }
